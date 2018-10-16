@@ -1,5 +1,5 @@
 'use strict';
-// Hello
+// Hello Gulp
 
 var gulp         = require('gulp'),
 	sass         = require('gulp-sass'),
