@@ -9,7 +9,9 @@ var gulp         = require('gulp'),
 	browserSync  = require('browser-sync').create(),
 	concat       = require('gulp-concat'),
 	uglify       = require('gulp-uglify'),
-	sassLint = require('gulp-sass-lint');
+	sassLint     = require('gulp-sass-lint'),
+	imagemin     = require('gulp-imagemin');
+
 
 gulp.task('browser-sync', ['styles', 'scripts'], function() {
 	browserSync.init({
@@ -21,7 +23,7 @@ gulp.task('browser-sync', ['styles', 'scripts'], function() {
 });
 
 gulp.task('sass-lint', function() {
-  return gulp.src('sass/*.sass')
+  return gulp.src('sass/**/*.sass')
       .pipe(sassLint({
         options: {
           formatter: 'stylish'
@@ -42,6 +44,23 @@ gulp.task('sass-lint', function() {
       .pipe(sassLint.format())
       .pipe(sassLint.failOnError())
 });
+
+gulp.task('imgMin', () =>
+    gulp.src('app/img/*')
+        .pipe(imagemin([
+		    imagemin.gifsicle({interlaced: true}),
+		    imagemin.jpegtran({progressive: true}),
+		    imagemin.optipng({optimizationLevel: 5}),
+		    imagemin.svgo({
+		        plugins: [
+		            {removeViewBox: true},
+		            {cleanupIDs: false}
+		        ]
+		    })
+		]))
+        .pipe(gulp.dest('app/img/min'))
+);
+
 
 gulp.task('styles', function () {
 	return gulp.src('sass/*.sass')
@@ -80,4 +99,4 @@ gulp.task('watch', function () {
 });
 
 
-gulp.task('default', ['browser-sync', 'watch']);
+gulp.task('default', ['browser-sync', 'watch', 'imgMin']);
